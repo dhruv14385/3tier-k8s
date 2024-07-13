@@ -125,12 +125,13 @@ kubectl apply –f service.yaml
 ```
 Check service 
 
+```
 kubectl get svc –n workshop 
-
+```
 Go to k8s_manifests directory. Edit image path in backend-deployment.yaml to that on ECR 
-
+```
 vim backend.yaml 
-
+```
 Apply backend deployment and service manifests. 
 
 Check logs to see if backend is connected to MongoDB 
@@ -140,71 +141,57 @@ Update image path in frontend deployment manifest. Also update backend URL.
 Apply frontend deployment and service. Then check that all 3 tiers (pods) are running. 
 
 Go to home directory. Download json file for IAM policy for Application Load Balancer. 
-
+```
 curl -O https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.5.4/docs/install/iam_policy.json 
-
- 
-
+```
 Create IAM policy from this json file 
-
+```
 aws iam create-policy --policy-name AWSLoadBalancerControllerIAMPolicy --policy-document file://iam_policy.json 
-
- 
-
+```
 Associate this policy with EKS 
-
+```
 eksctl utils associate-iam-oidc-provider --region=us-west-2 --cluster=three-tier-cluster --approve 
-
- 
-
+```
 Create IAM role for EKS. Update your AWS account number and region. 
-
+```
 eksctl create iamserviceaccount --cluster=three-tier-cluster --namespace=kube-system --name=aws-load-balancer-controller --role-name AmazonEKSLoadBalancerControllerRole --attach-policy-arn=arn:aws:iam::626072240565:policy/AWSLoadBalancerControllerIAMPolicy --approve --region=us-west-2 
-
- 
-
+```
 Install helm 
-
+```
 sudo snap install helm --classic 
-
- 
-
+```
 Add EKS chart repository to helm 
-
+```
 helm repo add eks https://aws.github.io/eks-charts 
-
- 
-
+```
 Get update for the repository above 
-
+```
 helm repo update eks 
-
+```
  
 
 Check repo list 
-
+```
 helm repo list 
-
+```
 Install ALB controller 
-
+```
 helm install aws-load-balancer-controller eks/aws-load-balancer-controller -n kube-system --set clusterName=my-cluster --set serviceAccount.create=false --set serviceAccount.name=aws-load-balancer-controller 
-
- 
+```
 
 Check if the controller above is installed  
-
+```
 kubectl get deployment -n kube-system aws-load-balancer-controller 
-
- 
+``` 
 
 Change directory to TWSThreeTierAppChallenge/k8s_manifests/ 
 
 Update host in full_stack_lb.yaml and apply full_stack_lb which is an Ingress manifest 
 
 Check ingress 
-
+```
 kubectl get ing –n workshop 
-
+```
 Create a new record for your domain in R53 
 
 To check database 
