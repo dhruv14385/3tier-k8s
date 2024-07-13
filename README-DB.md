@@ -9,71 +9,67 @@ Create an EC2 instance and name it – 3-tier-hq
 Connect to EC2 
 
 Get updates 
-
+```
 sudo apt-get update 
-
+```
 Clone repository 
-
+```
 git clone https://github.com/LondheShubham153/TWSThreeTierAppChallenge.git 
-
+```
 Go to folder TWSThreeTierAppChallenge/frontend 
 
 Install Docker 
-
+```
 sudo apt install docker.io 
-
+```
 Give user the permission to docker.sock. This is similar to add user to the group. 
-
+```
 sudo chown $USER /var/run/docker.sock 
-
+```
 Build frontend image. Dockerfile is already in the frontend folder. 
-
+```
 docker build –t three-tier-frontend . 
-
+```
 Check the images 
-
+```
 docker images 
-
+```
 Run the image (create container) 
-
+```
 docker run -d -p 3000:3000 three-tier-frontend:latest 
-
+```
 Open port 3000 to all traffic in SG if required 
 
 Check in the browser if the app is running by going to <EC2-public-IP>:3000	 
 
 Stop the container 
-
+```
 docker kill 
-
+```
 Go to home directory. Install AWS CLI. You need AWS Access key id and secret access key. 
-
+```
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" 
-
 sudo apt install unzip 
-
 unzip awscliv2.zip 
-
 sudo ./aws/install -i /usr/local/aws-cli -b /usr/local/bin --update 
-
 aws configure 
-
+```
  
 
 Prepare to push image to ECR. Create a public repository in ECR. Create separate repository for backend and frontend. Click on ‘View push commands’. Follow the commands. Make sure to build the image in the frontend directory. 
 
 Change directory to backend. Follow above steps and create image for backend and push it to ECR. To create container, use following command. 
-
+```
 docker run –d –p 8080:8080 three-tier-backend:latest 
-
+```
 Check if container is running.  
-
+```
 docker logs <container_name> 
-
+```
 You will notice that it is not connected to database because we haven’t created any container for database. 
 
 Install kubectl. Go to home directory and only then install.  
-
+```
 curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.19.6/2021-01-05/bin/linux/amd64/kubectl 
 
 chmod +x ./kubectl 
@@ -81,51 +77,52 @@ chmod +x ./kubectl
 sudo mv ./kubectl /usr/local/bin 
 
 kubectl version --short –client 
-
+```
 Install eksctl 
-
+```
 curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp 
 
 sudo mv /tmp/eksctl /usr/local/bin 
 
 eksctl version 
-
+```
 Setup EKS cluster. The command below will take 15 minutes to finish cluster set up. 
-
+```
 eksctl create cluster --name three-tier-cluster --region us-west-2 --node-type t2.medium --nodes-min 2 --nodes-max 2 
-
+```
 Link kubectl to EKS cluster. The command below helps point kubectl to the cluster we want, out of many available clusters. 
-
+```
 aws eks update-kubeconfig --region us-west-2 --name three-tier-cluster 
-
+```
+```
 kubectl get nodes 
-
+```
 Apply database manifests 
 
 Go to k8s_manifests/mongo directory. Create a new namespace called workshop.  
-
+```
 kubectl create namespace workshop 
-
+```
 Apply secrets.yaml 
-
+```
 kubectl apply –f secrets.yaml 
-
+```
 Apply deploy.yaml 
-
+```
 kubectl apply –f deploy.yaml 
-
+```
 Check deployment 
-
+```
 kubectl get deployment –n workshop 
-
+```
 Check available pods 
-
+```
 kubectl get pods –n workshop 
-
+```
 Apply service 
-
+```
 kubectl apply –f service.yaml 
-
+```
 Check service 
 
 kubectl get svc –n workshop 
