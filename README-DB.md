@@ -187,30 +187,9 @@ Check ingress
 ```
 kubectl get ing –n workshop 
 ```
-Create a new record for your domain in R53 
+Create a new CNAME record for your domain in R53 
 
-To check database 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
- 
-
+Use your host name to check if the app is accessible from public internet.
  
 
  
