@@ -1,5 +1,5 @@
 3 tier application deployment on Kubernetes 
-
+Frontend on ReactJS, Backend on NodeJS and Database on MongoDB.  
 https://www.youtube.com/live/wgmYbSN6_Is?si=kgeMPADmR56L2GKU 
 
 https://github.com/LondheShubham153/TWSThreeTierAppChallenge 
